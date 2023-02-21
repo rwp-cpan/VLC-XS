@@ -1,6 +1,9 @@
-package VLC::XS;
-
 use v5.37.9;
+use experimental qw( class try builtin );
+use builtin qw( true false trim );
+
+package VLC::XS;
+class VLC::XS;
 
 our $VERSION = 0.4;
 
@@ -8,145 +11,114 @@ require XSLoader;
 
 XSLoader::load( __PACKAGE__ , $VERSION );
 
-sub new {
-  my ( $class , $var_agrs ) = @_;
-  my $self = undef;
-  if ( defined( $var_agrs ) ) {
-    $self = {
-      _inst_   => VLC::XS::costum_inst( $var_agrs ) ,
-      _volume_ => 70 ,
-      _mute_   => 0 ,
-      _state_  => 0 ,
-    };
-  }
-  else {
-    $self = {
-      _inst_   => VLC::XS::costum_inst() ,
-      _volume_ => 70 ,
-      _mute_   => 0 ,
-      _state_  => 0 ,
-    };
-  }
-  bless $self , $class;
-  return $self;
+field $instance = VLC::XS::custom_instance();
+
+# TODO: add $instance to method arguments who require it comparing with Engine.pm
+
+method release ( ) {
+  VLC::XS::_release_( $instance );
 }
 
-sub release {
-  my $self = shift;
-  VLC::XS::_release_( $self -> { _inst_ } );
-}
-
-sub vlc_version {
+method vlc_version ( ) {
   VLC::XS::_version_();
 }
 
-sub set_media {
-  my ( $self , $url ) = @_;
-  VLC::XS::_set_media_( $self -> { _inst_ } , $url );
+method set_media ( $url ) {
+  VLC::XS::_set_media_( $instance , $url );
 }
 
-sub set_media_list {
-  my ( $self , $url ) = @_;
-  VLC::XS::_set_media_list_( $self -> { _inst_ } , $url );
+method set_media_list ( $url ) {
+  VLC::XS::_set_media_list_( $instance , $url );
 }
 
-sub set_location # TODO: Add POD for the method
+method set_location ( $url ) # TODO: Add POD for the method
 {
-  my ( $self , $url ) = @_;
-  VLC::XS::_set_location_( $self -> { _inst_ } , $url );
+  VLC::XS::_set_location( $instance , $url );
 }
 
-sub parsing_media {
-  my $self = shift;
+method parsing_media ( ) {
   VLC::XS::_parse_media_();
 }
 
-sub get_duration {
+method get_duration {
   return VLC::XS::_get_duration_();
 }
 
-sub play {
-  my $self = shift;
+method play {
   VLC::XS::_play_();
 }
 
-sub play_list {
-  my $self = shift;
+method play_list {
   VLC::XS::_play_list_();
 }
 
-sub play_next {
+method play_next {
   return VLC::XS::_media_list_player_next_();
 }
 
-sub play_previous {
+method play_previous {
   return VLC::XS::_media_list_player_previous_();
 }
 
-sub pause {
+method pause {
   VLC::XS::_pause_();
 }
 
-sub stop {
+method stop {
   VLC::XS::_stop_();
 }
 
-sub pause_list {
+method pause_list {
   VLC::XS::_pause_list_();
 }
 
-sub stop_list {
+method stop_list {
   VLC::XS::_stop_list_();
 }
 
-sub set_volume {
-  my ( $self , $i_volume ) = @_;
-  return VLC::XS::_set_volume_( $i_volume ) if ( defined $i_volume );
+method set_volume ( $volume ) {
+  return VLC::XS::_set_volume_( $volume ) if defined $volume;
 }
 
-sub get_volume {
+method get_volume {
   return VLC::XS::_get_volume_();
 }
 
-sub set_mute {
-  my ( $self , $status ) = @_;
+method set_mute ( $status ) {
   VLC::XS::_set_mute_( $status ) if ( defined $status );
 }
 
-sub get_mute {
+method get_mute {
   VLC::XS::_get_mute_();
 }
 
-sub get_state {
+method get_state {
   return VLC::XS::_get_state_();
 }
 
-sub event_manager {
+method event_manager {
   return VLC::XS::_event_manager_();
 }
 
-sub event_attach {
-  my ( $self , $manager , $i_event_type , $f_callback ) = @_;
+method event_attach ( $manager , $i_event_type , $f_callback ) {
   if ( defined $manager && defined $i_event_type && defined $f_callback ) {
     VLC::XS::_event_attach_( $manager , $i_event_type , $f_callback );
   }
 }
 
-sub get_meta {
-  my ( $self , $val ) = @_;
-  return VLC::XS::_get_meta_( $val ) if ( defined $val );
+method get_meta ( $value ) {
+  return VLC::XS::_get_meta_( $value ) if ( defined $value );
 }
 
-sub set_meta {
-  my ( $self , $e_meta , $val ) = @_;
-  VLC::XS::_set_meta_( $e_meta , $val ) if ( defined $val && defined $e_meta );
+method set_meta ( $meta , $value ) {
+  VLC::XS::_set_meta_( $meta , $value ) if ( defined $value && defined $meta );
 }
 
-sub save_meta {
+method save_meta {
   return VLC::XS::_save_meta_();
 }
 
-sub media_parse_async {
+method media_parse_async {
   return VLC::XS::_media_parse_async_();
 }
 

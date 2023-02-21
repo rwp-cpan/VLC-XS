@@ -210,7 +210,7 @@ CODE:
     printf("%s",libvlc_get_version());
 
 libvlc_instance_t *
-costum_inst(AV* vlc_args = 0)
+custom_instance(AV* vlc_args = 0)
 CODE:
     libvlc_instance_t * inst;
     if (vlc_args == 0){
@@ -241,7 +241,7 @@ CODE:
     libvlc_media_release (m); 
 
 void
-_set_location_(p_inst, mrl)
+_set_location (p_inst, mrl)
     char *mrl;
     libvlc_instance_t * p_inst;
 CODE:
