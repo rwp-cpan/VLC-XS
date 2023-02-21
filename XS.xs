@@ -343,15 +343,15 @@ CODE:
 OUTPUT:
     RETVAL
 
-void 
-_play_()
-CODE:       
-    libvlc_media_player_play (mp);
+void
+_play()
+CODE:
+  libvlc_media_player_play (mp);
 
 void
-_pause_()
+_pause()
 CODE:
-    libvlc_media_player_pause(mp);
+  libvlc_media_player_pause(mp);
 
 void 
 _stop_()

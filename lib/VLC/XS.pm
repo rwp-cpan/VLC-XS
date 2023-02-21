@@ -1,15 +1,15 @@
+# TODO: Use Dist-Zilla to package the distribution
+
 use v5.37.9;
 use experimental qw( class try builtin );
 use builtin qw( true false trim );
 
-package VLC::XS;
-class VLC::XS;
-
-our $VERSION = 0.4;
+package VLC::XS 0.4;
+class VLC::XS 0.4;
 
 require XSLoader;
 
-XSLoader::load( __PACKAGE__ , $VERSION );
+XSLoader::load();
 
 field $instance = VLC::XS::custom_instance();
 
@@ -44,8 +44,8 @@ method get_duration {
   return VLC::XS::_get_duration_();
 }
 
-method play {
-  VLC::XS::_play_();
+method play ( ) {
+  VLC::XS::_play();
 }
 
 method play_list {
@@ -60,8 +60,8 @@ method play_previous {
   return VLC::XS::_media_list_player_previous_();
 }
 
-method pause {
-  VLC::XS::_pause_();
+method pause ( ) {
+  VLC::XS::_pause();
 }
 
 method stop {

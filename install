@@ -1,0 +1,10 @@
+#! /usr/bin/env sh
+
+[ -f Makefile ] && make clean
+
+perlbrew exec --with blead \
+  perl Makefile.PL
+
+make
+
+make install
