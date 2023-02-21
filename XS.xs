@@ -14,18 +14,11 @@
 #include <vlc/vlc.h>
 #include <string.h>
 
-/*
- *m => media
-  mp => mplaye player
-  ml => media list
-  mlp => media list player
-*/
+libvlc_media_t * media;
+libvlc_media_player_t * player = NULL;
 
-libvlc_media_player_t *mp = NULL;
-libvlc_media_t *m;
-
-libvlc_media_list_t *ml;
-libvlc_media_list_player_t *mlp;
+libvlc_media_list_t * list;
+libvlc_media_list_player_t * list_player;
 
 static SV * perl_sub_event_manager_function;
 
@@ -224,9 +217,9 @@ CODE:
         }
         inst = libvlc_new (av_len(vlc_args), res);
     }
-    mp = libvlc_media_player_new( inst );
-    mlp = libvlc_media_list_player_new(inst);
-    ml = libvlc_media_list_new(inst);
+    player = libvlc_media_player_new( inst );
+    list_player = libvlc_media_list_player_new(inst);
+    list = libvlc_media_list_new(inst);
     RETVAL = inst;
 OUTPUT:
     RETVAL
@@ -236,30 +229,30 @@ _set_media_(p_inst, url)
     libvlc_instance_t * p_inst;
     const char *url;
 CODE:
-    m = libvlc_media_new_path (p_inst, url);
-    libvlc_media_player_set_media( mp, m );
-    libvlc_media_release (m); 
+   media = libvlc_media_new_path (p_inst, url);
+    libvlc_media_player_set_media( player,media);
+    libvlc_media_release ( media );
 
 void
 _set_location (p_inst, mrl)
     char *mrl;
     libvlc_instance_t * p_inst;
 CODE:
-   m = libvlc_media_new_location(p_inst, mrl );
-   libvlc_media_player_set_media( mp, m );
-   libvlc_media_release (m);
+  media = libvlc_media_new_location(p_inst, mrl );
+   libvlc_media_player_set_media( player,media);
+   libvlc_media_release ( media );
 
 void 
 _set_media_list_(p_inst, url)
     libvlc_instance_t * p_inst;
     const char *url;
 CODE:
-    m = libvlc_media_new_path (p_inst, url);
-    libvlc_media_list_add_media(ml, m);
-    libvlc_media_release (m);
+   media = libvlc_media_new_path (p_inst, url);
+    libvlc_media_list_add_media( list, media );
+    libvlc_media_release ( media );
 
-    libvlc_media_list_player_set_media_list(mlp, ml);
-    libvlc_media_list_player_set_media_player(mlp, mp);
+    libvlc_media_list_player_set_media_list(list_player, list);
+    libvlc_media_list_player_set_media_player(list_player, player);
 
 int
 _insert_media_list_(p_inst, url, i_pos)
@@ -267,9 +260,9 @@ _insert_media_list_(p_inst, url, i_pos)
     int i_pos;
     libvlc_instance_t * p_inst;
 CODE:
-    m = libvlc_media_new_path (p_inst, url);
-    RETVAL = libvlc_media_list_insert_media(ml, m, i_pos );
-    libvlc_media_release (m);
+   media = libvlc_media_new_path (p_inst, url);
+    RETVAL = libvlc_media_list_insert_media(list, media, i_pos );
+    libvlc_media_release ( media );
 OUTPUT:
     RETVAL
 
@@ -277,113 +270,112 @@ int
 _remove_media_list_index_(i_pos)
     int i_pos;
 CODE:
-    RETVAL = libvlc_media_list_remove_index(ml, i_pos);
+    RETVAL = libvlc_media_list_remove_index(list, i_pos);
 OUTPUT:
     RETVAL
 
 int
 _media_list_count_()
 CODE:
-    RETVAL = libvlc_media_list_count(ml);
+    RETVAL = libvlc_media_list_count(list);
 OUTPUT:
     RETVAL
 
 void
 _play_list_()
 CODE:
-    libvlc_media_list_player_set_media_list(mlp, ml);
-    libvlc_media_list_player_set_media_player(mlp, mp);
-    libvlc_media_list_player_play(mlp);
+    libvlc_media_list_player_set_media_list(list_player, list);
+    libvlc_media_list_player_set_media_player(list_player, player);
+    libvlc_media_list_player_play(list_player);
 
 void
 _pause_list_()
 CODE:
-    libvlc_media_list_player_pause(mlp);
+    libvlc_media_list_player_pause(list_player);
 
 int
 _media_list_player_next_()
 CODE:
-    RETVAL = libvlc_media_list_player_next(mlp);
+    RETVAL = libvlc_media_list_player_next(list_player);
 OUTPUT:
     RETVAL
 
 int
 _media_list_player_previous_()
 CODE:
-    RETVAL = libvlc_media_list_player_previous(mlp);
+    RETVAL = libvlc_media_list_player_previous(list_player);
 OUTPUT:
     RETVAL
 
 int 
 _media_list_is_readonly_()
 CODE:
-    RETVAL = libvlc_media_list_is_readonly( ml );
+    RETVAL = libvlc_media_list_is_readonly( list );
 OUTPUT:
     RETVAL
 
 void
 _media_list_lock()
 CODE:
-    libvlc_media_list_lock( ml );
+    libvlc_media_list_lock( list );
 
 void
 _media_list_unlock()
 CODE:
-    libvlc_media_list_unlock( ml );
+    libvlc_media_list_unlock( list );
 
 void
 _parse_media_()
 CODE:
-    libvlc_media_parse(m);
+    libvlc_media_parse( media );
 
 long
 _get_duration_()
 CODE:
-    RETVAL = libvlc_media_get_duration(m);
+    RETVAL = libvlc_media_get_duration( media );
 OUTPUT:
     RETVAL
 
-void
-_play()
+void _play()
 CODE:
-  libvlc_media_player_play (mp);
+  libvlc_media_player_play (player);
 
 void
 _pause()
 CODE:
-  libvlc_media_player_pause(mp);
+  libvlc_media_player_pause (player);
 
 void 
 _stop_()
 CODE:
-    libvlc_media_player_stop (mp);
+    libvlc_media_player_stop (player);
 
 void
 _stop_list_()
 CODE:
-    libvlc_media_list_player_stop(mlp);
+    libvlc_media_list_player_stop(list_player);
 
 void 
 _release_(p_inst)
     libvlc_instance_t * p_inst
 CODE:
-    libvlc_media_player_release (mp);
-    libvlc_media_list_player_release(mlp);
-    libvlc_media_list_release(ml);
+    libvlc_media_player_release (player);
+    libvlc_media_list_player_release(list_player);
+    libvlc_media_list_release(list);
     libvlc_release (p_inst);
 
 int
 _set_volume_(i_volume)
     int i_volume;
 CODE:
-    RETVAL = libvlc_audio_set_volume(mp, i_volume);
+    RETVAL = libvlc_audio_set_volume(player, i_volume);
 OUTPUT:
     RETVAL
 
 int
 _get_volume_()
 CODE:
-    RETVAL = libvlc_audio_get_volume(mp);
+    RETVAL = libvlc_audio_get_volume(player);
 OUTPUT:
     RETVAL
 
@@ -391,33 +383,33 @@ void
 _set_mute_(status)
     int status;
 CODE:
-    libvlc_audio_set_mute(mp, status);
+    libvlc_audio_set_mute(player, status);
 
 int 
 _get_mute_()
 CODE:
-    RETVAL = libvlc_audio_get_mute(mp);
+    RETVAL = libvlc_audio_get_mute(player);
 OUTPUT:
     RETVAL
 
 int
 _get_state_()
 CODE:
-     RETVAL = libvlc_media_get_state(m);
+     RETVAL = libvlc_media_get_state( media );
 OUTPUT:
      RETVAL
 
 libvlc_event_manager_t*
 _event_manager_()
 CODE:
-    RETVAL = libvlc_media_player_event_manager( mp );
+    RETVAL = libvlc_media_player_event_manager( player );
 OUTPUT:
     RETVAL
 
 libvlc_event_manager_t*
 _event_list_manager_()
 CODE:
-    RETVAL = libvlc_media_list_event_manager( ml );
+    RETVAL = libvlc_media_list_event_manager( list );
 OUTPUT:
     RETVAL
 
@@ -606,73 +598,73 @@ _get_meta_(val)
     const char *val
 CODE:
     if(strcmp(val, "title") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_Title);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_Title);
 
     if (strcmp(val, "artist") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_Artist);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_Artist);
 
     if (strcmp(val, "genre") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_Genre);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_Genre);
 
     if (strcmp(val, "album") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_Album);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_Album);
 
     if(strcmp(val, "copyright") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_Copyright);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_Copyright);
 
     if(strcmp(val, "track_number") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_TrackNumber);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_TrackNumber);
 
     if(strcmp(val, "description") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_Description);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_Description);
 
     if(strcmp(val, "rating") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_Rating);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_Rating);
 
     if(strcmp(val, "date") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_Date);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_Date);
 
     if(strcmp(val, "setting") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_Setting);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_Setting);
 
     if(strcmp(val, "url") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_URL);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_URL);
 
     if(strcmp(val, "language") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_Language);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_Language);
 
     if(strcmp(val, "now_playing") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_NowPlaying);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_NowPlaying);
 
     if(strcmp(val, "publisher") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_Publisher);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_Publisher);
 
     if(strcmp(val, "encoded_by") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_EncodedBy);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_EncodedBy);
 
     if(strcmp(val, "artwork_url") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_ArtworkURL);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_ArtworkURL);
 
     if(strcmp(val, "track_id") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_TrackID);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_TrackID);
 
     if(strcmp(val, "track_total") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_TrackTotal);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_TrackTotal);
 
     if(strcmp(val, "director") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_Director);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_Director);
 
     if(strcmp(val, "season") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_Season);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_Season);
 
     if(strcmp(val, "episode") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_Episode);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_Episode);
 
     if(strcmp(val, "show_name") == 0) 
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_ShowName);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_ShowName);
 
     if(strcmp(val, "actors") == 0)
-        RETVAL = libvlc_media_get_meta(m, libvlc_meta_Actors);
+        RETVAL = libvlc_media_get_meta(media, libvlc_meta_Actors);
 OUTPUT:
     RETVAL
 
@@ -682,85 +674,83 @@ _set_meta_(e_meta, val)
     const char *val;
 CODE:
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_Title, val );
+        libvlc_media_set_meta( media, libvlc_meta_Title, val );
 
     if(strcmp(e_meta, "artist") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_Artist, val );
+        libvlc_media_set_meta( media, libvlc_meta_Artist, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_Genre, val );
+        libvlc_media_set_meta( media, libvlc_meta_Genre, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_Copyright, val );
+        libvlc_media_set_meta( media, libvlc_meta_Copyright, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_Album, val );
+        libvlc_media_set_meta( media, libvlc_meta_Album, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_TrackNumber, val );
+        libvlc_media_set_meta( media, libvlc_meta_TrackNumber, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_Description, val );
+        libvlc_media_set_meta( media, libvlc_meta_Description, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_Rating, val );
+        libvlc_media_set_meta( media, libvlc_meta_Rating, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_Date, val );
+        libvlc_media_set_meta( media, libvlc_meta_Date, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_Setting, val );
+        libvlc_media_set_meta( media, libvlc_meta_Setting, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_URL, val );
+        libvlc_media_set_meta( media, libvlc_meta_URL, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_Language, val );
+        libvlc_media_set_meta( media, libvlc_meta_Language, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_NowPlaying, val );
+        libvlc_media_set_meta( media, libvlc_meta_NowPlaying, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_Publisher, val );
+        libvlc_media_set_meta( media, libvlc_meta_Publisher, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_EncodedBy, val );
+        libvlc_media_set_meta( media, libvlc_meta_EncodedBy, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_ArtworkURL, val );
+        libvlc_media_set_meta( media, libvlc_meta_ArtworkURL, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_TrackID, val );
+        libvlc_media_set_meta( media, libvlc_meta_TrackID, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_TrackTotal, val );
+        libvlc_media_set_meta( media, libvlc_meta_TrackTotal, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_Director, val );
+        libvlc_media_set_meta( media, libvlc_meta_Director, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_Season, val );
+        libvlc_media_set_meta( media, libvlc_meta_Season, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_Episode, val );
+        libvlc_media_set_meta( media, libvlc_meta_Episode, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_ShowName, val );
+        libvlc_media_set_meta( media, libvlc_meta_ShowName, val );
 
     if(strcmp(e_meta, "title") == 0)
-        libvlc_media_set_meta( m, libvlc_meta_Actors, val );
+        libvlc_media_set_meta( media, libvlc_meta_Actors, val );
 
 
 int
 _save_meta_()
 CODE:
-    RETVAL = libvlc_media_save_meta( m );
+    RETVAL = libvlc_media_save_meta( media );
 OUTPUT:
     RETVAL
 
 void
 _media_parse_async_()
 CODE:
-    libvlc_media_parse_async( m );
-
-
+    libvlc_media_parse_async( media );
