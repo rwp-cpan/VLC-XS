@@ -4,7 +4,7 @@
 //       8 | #include <vlc/vlc.h>
 
 
-#define PERL_nO_GET_CONTEXT
+#define PERL_NO_GET_CONTEXT
 
 #include "EXTERN.h"
 #include "perl.h"

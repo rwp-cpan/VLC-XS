@@ -8,3 +8,5 @@ perlbrew exec --with blead \
 make
 
 make install
+
+make clean
