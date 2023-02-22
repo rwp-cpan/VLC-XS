@@ -44,7 +44,9 @@ method get_duration {
   return VLC::XS::_get_duration_();
 }
 
-# TODO: Document XS play
+method play ( ) {
+  _play();
+}
 
 method play_list {
   VLC::XS::_play_list_();
@@ -58,10 +60,12 @@ method play_previous {
   return VLC::XS::_media_list_player_previous_();
 }
 
-# TODO: Document XS pause
+method pause ( ) {
+  _pause();
+}
 
 method stop {
-  VLC::XS::_stop_();
+  _stop();
 }
 
 method pause_list {

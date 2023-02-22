@@ -198,8 +198,7 @@ void f_callback(const libvlc_event_t * event, void* opaque)
   call_sv(perl_sub_event_manager_function, G_DISCARD);
 }
 
-MODULE = VLC::XS
-PACKAGE = VLC::XS
+MODULE = VLC::XS PACKAGE = VLC::XS
 
 void _version()
 CODE:
@@ -336,18 +335,17 @@ CODE:
 OUTPUT:
   RETVAL
 
-void play ( )
+void _play ( )
 CODE:
   libvlc_media_player_play ( player );
 
-void pause ( )
+void _pause ( )
 CODE:
   libvlc_media_player_pause ( player );
 
-void 
-_stop_()
+void _stop ( )
 CODE:
-  libvlc_media_player_stop (player);
+  libvlc_media_player_stop ( player );
 
 void
 _stop_list_()
