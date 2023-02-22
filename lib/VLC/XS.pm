@@ -19,8 +19,8 @@ method release ( ) {
   VLC::XS::_release_( $instance );
 }
 
-method vlc_version ( ) {
-  VLC::XS::_version_();
+method version ( ) {
+  VLC::XS::_version();
 }
 
 method set_media ( $url ) {
