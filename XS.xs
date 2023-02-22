@@ -27,6 +27,9 @@ void f_callback(const libvlc_event_t * event, void* opaque)
   dSP;
   PUSHMARK(SP);
   //XPUSHs(sv_2mortal(newSVnv(event->type)));
+
+  // TODO: Convert the conditionals to 'switch' statement
+
   if (event->type == libvlc_MediaPlayerPlaying)
     PUSHs(sv_2mortal(newSVpv("media_player_playing", 0)));
   else if (event->type == libvlc_MediaPlayerStopped)
@@ -205,9 +208,10 @@ CODE:
 libvlc_instance_t * custom_instance (AV* vlc_args = 0)
 CODE:
   libvlc_instance_t * inst;
-  if (vlc_args == 0){
+  if (vlc_args == 0) {
     inst = libvlc_new (0, NULL);
-  } else {
+  }
+  else {
     const char *res[av_len(vlc_args)];
     int i;
     for (i = 0; i <= av_len(vlc_args); ++i){
@@ -223,24 +227,23 @@ CODE:
 OUTPUT:
   RETVAL
 
-void  _set_media_(instance, url)
+void _set_media (instance, url)
   libvlc_instance_t * instance;
-  const char *url;
+  const char * url;
 CODE:
-   media = libvlc_media_new_path (instance, url);
-  libvlc_media_player_set_media( player,media);
+  media = libvlc_media_new_path ( instance, url );
+  libvlc_media_player_set_media ( player, media );
   libvlc_media_release ( media );
 
-void _set_location (instance, mrl)
-  char *mrl;
+void _set_location ( instance, mrl )
+  char * mrl;
   libvlc_instance_t * instance;
 CODE:
-  media = libvlc_media_new_location(instance, mrl );
-  libvlc_media_player_set_media( player,media);
+  media = libvlc_media_new_location ( instance, mrl );
+  libvlc_media_player_set_media ( player,media );
   libvlc_media_release ( media );
 
-void 
-_set_media_list_(instance, url)
+void  _set_media_list_(instance, url)
   libvlc_instance_t * instance;
   const char *url;
 CODE:
@@ -333,14 +336,13 @@ CODE:
 OUTPUT:
   RETVAL
 
-void _play()
+void play ( )
 CODE:
-  libvlc_media_player_play (player);
+  libvlc_media_player_play ( player );
 
-void
-_pause()
+void pause ( )
 CODE:
-  libvlc_media_player_pause (player);
+  libvlc_media_player_pause ( player );
 
 void 
 _stop_()

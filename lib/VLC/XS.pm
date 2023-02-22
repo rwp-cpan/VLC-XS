@@ -24,7 +24,7 @@ method version ( ) {
 }
 
 method set_media ( $url ) {
-  VLC::XS::_set_media_( $instance , $url );
+  VLC::XS::_set_media( $instance , $url );
 }
 
 method set_media_list ( $url ) {
@@ -44,9 +44,7 @@ method get_duration {
   return VLC::XS::_get_duration_();
 }
 
-method play ( ) {
-  VLC::XS::_play();
-}
+# TODO: Document XS play
 
 method play_list {
   VLC::XS::_play_list_();
@@ -60,9 +58,7 @@ method play_previous {
   return VLC::XS::_media_list_player_previous_();
 }
 
-method pause ( ) {
-  VLC::XS::_pause();
-}
+# TODO: Document XS pause
 
 method stop {
   VLC::XS::_stop_();
