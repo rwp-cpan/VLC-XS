@@ -328,10 +328,9 @@ _parse_media_()
 CODE:
   libvlc_media_parse( media );
 
-long
-_get_duration_()
+long _get_duration ()
 CODE:
-  RETVAL = libvlc_media_get_duration( media );
+  RETVAL = libvlc_media_get_duration ( media );
 OUTPUT:
   RETVAL
 

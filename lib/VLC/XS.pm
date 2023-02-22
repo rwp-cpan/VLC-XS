@@ -16,32 +16,32 @@ field $instance = VLC::XS::custom_instance();
 # TODO: add $instance to method arguments who require it comparing with Engine.pm
 
 method release ( ) {
-  VLC::XS::_release_( $instance );
+  _release_( $instance );
 }
 
 method version ( ) {
-  VLC::XS::_version();
+  _version();
 }
 
 method set_media ( $url ) {
-  VLC::XS::_set_media( $instance , $url );
+  _set_media( $instance , $url );
 }
 
 method set_media_list ( $url ) {
-  VLC::XS::_set_media_list_( $instance , $url );
+  _set_media_list_( $instance , $url );
 }
 
 method set_location ( $url ) # TODO: Add POD for the method
 {
-  VLC::XS::_set_location( $instance , $url );
+  _set_location( $instance , $url );
 }
 
 method parsing_media ( ) {
-  VLC::XS::_parse_media_();
+  _parse_media_();
 }
 
 method get_duration {
-  return VLC::XS::_get_duration_();
+  _get_duration();
 }
 
 method play ( ) {
@@ -49,15 +49,15 @@ method play ( ) {
 }
 
 method play_list {
-  VLC::XS::_play_list_();
+  _play_list_();
 }
 
 method play_next {
-  return VLC::XS::_media_list_player_next_();
+  return _media_list_player_next_();
 }
 
 method play_previous {
-  return VLC::XS::_media_list_player_previous_();
+  return _media_list_player_previous_();
 }
 
 method pause ( ) {
@@ -69,60 +69,58 @@ method stop {
 }
 
 method pause_list {
-  VLC::XS::_pause_list_();
+  _pause_list_();
 }
 
 method stop_list {
-  VLC::XS::_stop_list_();
+  _stop_list_();
 }
 
 method set_volume ( $volume ) {
-  return VLC::XS::_set_volume_( $volume ) if defined $volume;
+  return _set_volume_( $volume ) if defined $volume;
 }
 
 method get_volume {
-  return VLC::XS::_get_volume_();
+  return _get_volume_();
 }
 
 method set_mute ( $status ) {
-  VLC::XS::_set_mute_( $status ) if ( defined $status );
+  _set_mute_( $status ) if ( defined $status );
 }
 
 method get_mute {
-  VLC::XS::_get_mute_();
+  _get_mute_();
 }
 
 method get_state {
-  return VLC::XS::_get_state_();
+  return _get_state_();
 }
 
 method event_manager {
-  return VLC::XS::_event_manager_();
+  return _event_manager_();
 }
 
 method event_attach ( $manager , $i_event_type , $f_callback ) {
   if ( defined $manager && defined $i_event_type && defined $f_callback ) {
-    VLC::XS::_event_attach_( $manager , $i_event_type , $f_callback );
+    _event_attach_( $manager , $i_event_type , $f_callback );
   }
 }
 
 method get_meta ( $value ) {
-  return VLC::XS::_get_meta_( $value ) if ( defined $value );
+  return _get_meta_( $value ) if ( defined $value );
 }
 
 method set_meta ( $meta , $value ) {
-  VLC::XS::_set_meta_( $meta , $value ) if ( defined $value && defined $meta );
+  _set_meta_( $meta , $value ) if ( defined $value && defined $meta );
 }
 
 method save_meta {
-  return VLC::XS::_save_meta_();
+  return _save_meta_();
 }
 
 method media_parse_async {
-  return VLC::XS::_media_parse_async_();
+  return _media_parse_async_();
 }
-
-1;
 
 __END__
 
